@@ -3,6 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from handlers import user_handlers
 from config.config import Config, load_config
@@ -17,7 +18,7 @@ async def main():
 
     await create_table(engine)
 
-    bot = Bot(token=config.tg_bot.token)
+    bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher()
     dp.include_router(user_handlers.router)
     dp.update.middleware(DatabaseMiddleware(session=session))
