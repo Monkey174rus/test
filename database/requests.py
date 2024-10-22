@@ -16,8 +16,8 @@ class Database:
         await self.session.commit()
     
 
-    async def get_user_data(self, id: int, username:str) -> User:
-        user = await self.session.get(User, id, username)
+    async def get_user(self, id: int) -> User:
+        user = await self.session.get(User, id)
         return user
 
 
