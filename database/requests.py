@@ -19,6 +19,12 @@ class Database:
     async def get_user(self, id: int) -> User:
         user = await self.session.get(User, id)
         return user
+        
+    async def delete_user(self, id: int ) -> User:
+        user = await self.session.get(User, id)
+        if user:
+            await self.session.delete(user)
+        await self.session.commit()
 
 
 

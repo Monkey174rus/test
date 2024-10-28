@@ -9,6 +9,7 @@ from handlers import user_handlers
 from config.config import Config, load_config
 from middlewares.db import DatabaseMiddleware
 from database.base import create_table
+from aiogram.fsm.storage.redis import RedisStorage
 
 
 async def main():
@@ -16,10 +17,12 @@ async def main():
     engine = create_async_engine(url=config.db.url, echo=True)
     session = async_sessionmaker(engine, expire_on_commit=False)
 
+    storage = RedisStorage.from_url(config.redis.url)
+
     await create_table(engine)
 
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
     dp.include_router(user_handlers.router)
     dp.update.middleware(DatabaseMiddleware(session=session))
     await bot.delete_webhook(drop_pending_updates=True)

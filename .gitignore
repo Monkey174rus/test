@@ -3,4 +3,6 @@ test_env/
 .mypy_cache/
 .vscode/
 __pycache__/
+hash.py
+rredis.py
 
