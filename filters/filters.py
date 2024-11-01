@@ -1,12 +1,12 @@
 from aiogram.filters import BaseFilter
-from aiogram.types import CallbackQuery
+from aiogram.types import TelegramObject
+
+class User_Login(BaseFilter):
+
+    async def __call__(self,  event: TelegramObject, state_us) -> bool:
+
+        if state_us is not None:
+            return True
+        return False
 
 
-class IsDigitCallbackData(BaseFilter):
-    async def call(self, callback: CallbackQuery) -> bool:
-        return callback.data.isdigit()
-
-
-class IsDelBookmarkCallbackData(BaseFilter):
-    async def call(self, callback: CallbackQuery) -> bool:
-        return callback.data.endswith('del') and callback.data[:-3].isdigit()
