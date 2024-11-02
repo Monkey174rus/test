@@ -57,7 +57,6 @@ async def press_start_command(message: Message, i18n, db: Database):
 @login_router.callback_query(F.data == 'exit')
 async def process_delete_press(callback: CallbackQuery,i18n, state: FSMContext):
         
-        await state.update_data(login_completed=callback.data)
         await state.clear ()
         await callback.answer()
         await callback.message.edit_text(text=i18n['/start'].replace(', @', f' {'аккаунт не удален, выxод выполнен'}'),
@@ -83,7 +82,6 @@ async def process_delete_press(callback: CallbackQuery,i18n, db: Database, state
         await db.delete_user(
             id=callback.from_user.id
         )
-        await state.update_data(login_completed=callback.data)
         await state.clear ()
         await callback.answer()
         await callback.message.edit_text(text=i18n['/start'].replace(', @', f' {'аккаунт удален, выxод выполнен'}'),
