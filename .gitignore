@@ -5,4 +5,4 @@ test_env/
 __pycache__/
 hash.py
 rredis.py
-
+static

@@ -3,31 +3,62 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import CallbackQuery, Message
 from database import Database
 from keyboards.start_inline_kb import create_start_keyboard
+from keyboards.keyboard import start_kb
 
 
 from aiogram.fsm.context import FSMContext
+from filters.dell_inline import Dell_25
 
 
 exit_router = Router()
 
-
+exit_router.message.filter(Dell_25())
+exit_router.callback_query.filter(Dell_25())
 
 @exit_router.message(CommandStart())
-async def process_start_command_login(message: Message, i18n, db: Database):
+async def press_start_command_exit(message: Message, i18n,dell, db: Database  ):
+    
+    
     if await db.get_user(id=message.from_user.id) is not None:
-        await message.answer(i18n.get(message.text).replace(', @', f' {'вxод не выполнен, регистрация есть'}'),
+        msg = await message.answer(i18n.get(message.text).replace(', @', f' {'вxод не выполнен, регистрация есть'}'),
+                                reply_markup=create_start_keyboard(i18n,
+                                'start',
+                                'setup'
+                                )
+                            )
+    else :
+          msg = await message.answer(i18n.get(message.text).replace('@', f' {'вxод не выполнен, регистрации нет'}'),
+                                reply_markup=create_start_keyboard(i18n,
+                                'start',
+                                'setup'
+                                )
+                            )
+
+    dell['m'] = msg.message_id
+    dell['c'] = msg.chat.id
+
+    
+
+
+@exit_router.callback_query(F.data == 'setup')
+async def press_setup(callback: CallbackQuery, i18n, db: Database):
+    if await db.get_user(id=callback.from_user.id) is not None:
+          await callback.answer()
+          await callback.message.answer(text=i18n['login_text'],
                                 reply_markup=create_start_keyboard(i18n,
                                 'login',
                                 'delete'
                                 )
                             )
     else :
-          await message.answer(i18n.get(message.text).replace('@', f' {'вxод не выполнен, регистрации нет'}'),
+          await callback.answer()
+          await callback.message.answer(text=i18n['exit_text'],
                                 reply_markup=create_start_keyboard(i18n,
-                                'login',
                                 'registration'
                                 )
                             )
+    #await callback.message.delete()
+
 
 
 @exit_router.callback_query(F.data == 'login')

@@ -5,18 +5,25 @@ from aiogram.fsm.context import FSMContext
 from filters.filters import User_Login
 from keyboards.start_inline_kb import create_start_keyboard
 from database import Database
+from keyboards.keyboard import start_kb
+from filters.dell_inline import Dell_25
 
 
 
 login_router = Router()
 login_router.message.filter(User_Login())
 login_router.callback_query.filter(User_Login())
+login_router.message.filter(Dell_25())
+login_router.callback_query.filter(Dell_25())
 
 
 
 @login_router.message(Command(commands='help'))
-async def process_login_command(message: Message, st, i18n, state: FSMContext):
-    await message.answer(i18n.get(message.text))
+async def process_login_command(message: Message, st, i18n, state: FSMContext ):
+
+    
+    
+    await message.answer(i18n.get(message.text),reply_markup=start_kb(i18n))
     
 
     await state.set_state(st.login_completed)
@@ -41,17 +48,18 @@ async def press_start_command(message: Message, i18n, db: Database):
         
         await message.answer(i18n.get(message.text).replace('@', f' {'вxод выполнен, регистрация есть'}'),
                                 reply_markup=create_start_keyboard(i18n,
-                                'exit',
-                                'delete'
+                                'start',
+                                'setup'
                                 )
                             )
     else :
           await message.answer(i18n.get(message.text).replace('@', f' {'вxод выполнен, регистрации нет'}'),
                                 reply_markup=create_start_keyboard(i18n,
-                                'exit',
-                                'registration'
+                                'start',
+                                'setup'
                                 )
                             )
+    
         
 
 @login_router.callback_query(F.data == 'exit')
